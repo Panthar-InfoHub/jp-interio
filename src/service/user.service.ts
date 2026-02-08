@@ -1,6 +1,6 @@
 import AppError from "../middlwares/ErrorMiddleware.js";
 import logger from "../middlwares/logger.js";
-import { Prisma } from "../prisma/generated/prisma/client.js";
+import { Prisma, SubscriptionStatus } from "../prisma/generated/prisma/client.js";
 import { db } from "../server.js";
 
 class UserServiceClass {
@@ -35,7 +35,29 @@ class UserServiceClass {
     async updateUser(id: string, data: Prisma.UserUpdateInput) {
         return await db.user.update({
             where: { id },
-            data
+            data,
+            include: {
+                entitlements: true,
+                user_subscriptions: {
+                    where: {
+                        status: 'ACTIVE',
+                    },
+                },
+            },
+
+        });
+    }
+
+    async updateUserSubscription(user_id: string, plan_id: string, status: SubscriptionStatus) {
+        await db.userSubscription.updateMany({
+            where: {
+                user_id,
+                plan_id,
+                status: 'ACTIVE',
+            },
+            data: {
+                status,
+            },
         });
     }
 }

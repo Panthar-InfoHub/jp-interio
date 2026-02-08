@@ -30,8 +30,14 @@ class AiControllerClass {
 
             // Decreasing user limit if entitlement_limited
             if (ent && ent.type === "entitlement_limited" && ent.entitlement_id) {
-                await user_service.updateUser(user_id, { user_limit: { decrement: 1 } });
+                const user = await user_service.updateUser(user_id, { user_limit: { decrement: 1 } });
                 logger.debug(`Decremented user limit for user ${user_id} under entitlement ${ent.entitlement_id}`);
+
+                if (user.user_limit === 0) {
+                    logger.warn(`User ${user_id} has exhausted their user limit under entitlement ${ent.entitlement_id}`);
+                    await user_service.updateUserSubscription(user_id, user.entitlements?.plan_id!, "EXPIRED");
+                    logger.info(`Updated subscription status to EXPIRED for user ${user_id} under plan ${user.entitlements?.plan_id}`);
+                }
             }
 
             res.status(200).json({
