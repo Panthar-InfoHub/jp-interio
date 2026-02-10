@@ -21,7 +21,10 @@ class UserServiceClass {
 
     async findUserById(id: string) {
         return await db.user.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                entitlements: true
+            }
         });
     }
 
