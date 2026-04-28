@@ -31,7 +31,7 @@ class UserControllerClass {
 
     async getUserById(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = req.params.id;
+            const userId = req.params.id as string;
 
             if (!userId) {
                 logger.warn("User ID parameter is missing");
@@ -61,7 +61,7 @@ class UserControllerClass {
 
     async updateUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = req.params.id;
+            const userId = req.params.id as string;
             const updateData = req.body;
 
             if (!userId) {

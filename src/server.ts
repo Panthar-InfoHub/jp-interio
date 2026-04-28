@@ -1,5 +1,6 @@
 import cors from "cors"
 import dotenv from "dotenv"
+dotenv.config()
 import express from "express"
 import morgan from "morgan"
 import { errorHandler } from "./middlwares/ErrorMiddleware.js"
@@ -19,7 +20,6 @@ import { payment_router } from "./routes/payment.routes.js"
 const pool = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 export const db = new PrismaClient({ adapter: pool })
 const app = express()
-dotenv.config()
 //Setting up socket server
 
 
